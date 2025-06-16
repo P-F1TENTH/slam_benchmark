@@ -12,9 +12,10 @@ IMAGE=benchmark_"$VARIANT"
 NAME="$IMAGE"
 XSOCK=/tmp/.X11-unix
 XAUTH=/tmp/.docker.xauth
+REPO_NAME=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || echo '')")
 
-if ! [ -d "src" ]; then
-  echo "Error: directory \`src\` not found. Please run this script from the root of the slam_benchmark repository."
+if [ "$REPO_NAME" != "slam_benchmark" ]; then
+  echo "Error: not inside the slam_benchmark repository."
   exit 1
 fi
 
@@ -32,13 +33,12 @@ elif [ "$(docker ps -aq -f status=running -f name="${NAME}")" ]; then
 else
   exec docker run \
     -it \
-    --env=DISPLAY="${DISPLAY}"  \
+    --env=DISPLAY="${DISPLAY}" \
     --env=QT_X11_NO_MITSHM=1 \
     --env=XDG_RUNTIME_DIR=/tmp \
     --env=XAUTHORITY="${XAUTH}" \
     --volume="${XAUTH}":"${XAUTH}" \
     --volume="${XSOCK}":"${XSOCK}" \
-    --volume "${PWD}"/src:/root/ws/src \
     --volume "${PWD}"/rosbags:/root/ws/rosbags \
     --network=host \
     --name="${NAME}" \
