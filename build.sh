@@ -2,6 +2,8 @@
 
 set -eu
 
-for slam in semantic_suma kiss_slam spark_fast_lio semantic_dsp_map lio_sam; do
-    docker build -f docker/"$slam".Dockerfile --tag benchmark_"$slam" .
+for dockerfile in docker/*.Dockerfile; do
+    slam=$(basename "$dockerfile" .Dockerfile)
+    docker build -f "$dockerfile" --tag "benchmark_${slam}" .
 done
+
