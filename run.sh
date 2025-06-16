@@ -2,14 +2,20 @@
 
 set -eu
 
-NAME=slam_benchmark_ros
-IMAGE=slam_benchmark_ros
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 {semantic_suma|kiss_slam|spark_fast_lio|semantic_dsp_map|lio_sam}"
+  exit 1
+fi
+
+VARIANT=$1
+IMAGE=benchmark_"$VARIANT"
+NAME="$IMAGE"
 XSOCK=/tmp/.X11-unix
 XAUTH=/tmp/.docker.xauth
 
 if ! [ -d "src" ]; then
-	echo "Error: directory `src` not found. Please run this script from the root of the slam_benchmark repository."
-	exit 1
+  echo "Error: directory \`src\` not found. Please run this script from the root of the slam_benchmark repository."
+  exit 1
 fi
 
 if ! [ -f "${XAUTH}" ]; then
@@ -19,14 +25,11 @@ if ! [ -f "${XAUTH}" ]; then
 fi
 
 if [ "$(docker ps -aq -f status=exited -f name="${NAME}")" ]; then
-  # Start the existing container and attach to it
   docker start "${NAME}"
   exec docker exec -it "${NAME}" bash
 elif [ "$(docker ps -aq -f status=running -f name="${NAME}")" ]; then
-  # Attach to the running container
   exec docker exec -it "${NAME}" bash
 else
-  # Create a new container and attach to it
   exec docker run \
     -it \
     --env=DISPLAY="${DISPLAY}"  \

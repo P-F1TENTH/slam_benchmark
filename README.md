@@ -14,16 +14,5 @@ Build the container:
 
 Run the container:
 ```
-./run.sh
-```
-
-Build the workspace:
-```
-cd /root/ws
-colcon build --symlink-install
-```
-
-Run:
-```
-ros2 launch launch/slam_benchmark_ros.launch.py
+./run.sh {semantic_suma|kiss_slam|spark_fast_lio|semantic_dsp_map|lio_sam}
 ```

@@ -1,6 +1,6 @@
 FROM ros:humble
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN ln -snf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime && \
     echo Europe/Warsaw > /etc/timezone && \
@@ -10,8 +10,6 @@ RUN ln -snf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime && \
     echo 'export ROS_DOMAIN_ID=222' >> /root/.bashrc && \
     echo 'source /opt/ros/${ROS_DISTRO}/setup.bash' >> /root/.bashrc && \
     mkdir -p /root/ws/src
-
-COPY ./src/ /root/ws/src/
 
 WORKDIR /root/ws
 
@@ -31,7 +29,5 @@ RUN apt-get update -q && \
         wget \
         ros-humble-rviz2 \
         ros-humble-rqt* && \
-    rosdep update && \
-    rosdep install --from-paths src --ignore-src -r -y -q && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
